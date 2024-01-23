@@ -1,21 +1,27 @@
-<div>
-  <div *ngFor="let location of currentConditionsByZip()" class="well flex" (click)="showForecast(location.zip)">
-    <div>
-      <h3>{{location.data.name}} ({{location.zip}})</h3>
-      <h4>Current conditions: {{location.data.weather[0].main}}</h4>
-      <h4>Temperatures today:</h4>
-      <p>
-        Current {{location.data.main.temp | number:'.0-0'}}
-        - Max {{location.data.main.temp_max | number:'.0-0'}}
-        - Min {{location.data.main.temp_min | number:'.0-0'}}
-      </p>
-      <p>
-        <a [routerLink]="['/forecast', location.zip]" >Show 5-day forecast for {{location.data.name}}</a>
-      </p>
+<ng-container *ngIf="currentConditions().length > 0">
+  <tabs [items]="tabData()" (activeTabChange)="changeActiveItem($event)" (closeTabChange)="closeTab($event)">
+    <div class="well flex">
+      <div class="">
+        <h3>{{ currentConditions()[index()]?.data?.name }} ({{ currentConditions()[index()]?.zip }})</h3>
+        <h4>Current currentConditions: {{ currentConditions()[index()]?.data?.weather[0]?.main }}</h4>
+        <h4>Temperatures today:</h4>
+        <p>
+          Current {{ currentConditions()[index()]?.data?.main?.temp | number: '.0-0' }} - Max
+          {{ currentConditions()[index()]?.data?.main?.temp_max | number: '.0-0' }} - Min
+          {{ currentConditions()[index()]?.data?.main?.temp_min | number: '.0-0' }}
+        </p>
+        <p>
+          <a [routerLink]="['/forecast', currentConditions()[index()]?.zip]"
+            >Show 5-day forecast for {{ currentConditions()[index()]?.data?.name }}</a
+          >
+        </p>
+      </div>
+
+      <div>
+        <img [src]="weatherService?.getWeatherIcon(currentConditions()[index()]?.data?.weather[0]?.id)" />
+      </div>
     </div>
-    <div>
-      <span class="close" (click)="locationService.removeLocation(location.zip)">&times;</span>
-      <img [src]="weatherService.getWeatherIcon(location.data.weather[0].id)">
-    </div>
- </div>
-</div>
+  </tabs>
+</ng-container>
+
+<ng-template #error> Out of service. Error response from the API. Please refresh the page </ng-template>

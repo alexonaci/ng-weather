@@ -1,33 +1,45 @@
 import { Injectable } from '@angular/core';
-import {WeatherService} from "./weather.service";
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { LocationUpdate, LOCATIONS, Operation } from './location.type';
+import { DataStoreService } from './cache-system/data-store.service';
+import { CachedResources } from './app.module';
+import { Resource } from './cache-system/cache.config';
 
-export const LOCATIONS : string = "locations";
-
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class LocationService {
+  private locations$ = new BehaviorSubject<string[]>(this.loadInitialLocations());
+  private changeNotifier$ = new Subject<LocationUpdate>();
 
-  locations : string[] = [];
+  constructor(private dataStoreService: DataStoreService<Resource<CachedResources>>) {}
 
-  constructor(private weatherService : WeatherService) {
-    let locString = localStorage.getItem(LOCATIONS);
-    if (locString)
-      this.locations = JSON.parse(locString);
-    for (let loc of this.locations)
-      this.weatherService.addCurrentConditions(loc);
+  locationChanges(): Observable<string[]> {
+    return this.locations$.asObservable();
   }
 
-  addLocation(zipcode : string) {
-    this.locations.push(zipcode);
-    localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
-    this.weatherService.addCurrentConditions(zipcode);
+  operationChanges(): Observable<LocationUpdate> {
+    return this.changeNotifier$.asObservable();
   }
 
-  removeLocation(zipcode : string) {
-    let index = this.locations.indexOf(zipcode);
-    if (index !== -1){
-      this.locations.splice(index, 1);
-      localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
-      this.weatherService.removeCurrentConditions(zipcode);
-    }
+  addLocation(zipcode: string): void {
+    const locations = this.dataStoreService.getFromStorage<string[]>(LOCATIONS);
+    const existingLocations = locations ?? [];
+    this.changeNotifier$.next({ zipcode, operation: Operation.ADD });
+    this.updateStorage([...existingLocations, zipcode]);
+  }
+
+  removeLocation(zipcode: string): void {
+    const locations = this.dataStoreService.getFromStorage<string[]>(LOCATIONS);
+    this.changeNotifier$.next({ zipcode, operation: Operation.DELETE });
+    this.updateStorage(locations.filter((loc) => loc !== zipcode));
+  }
+
+  private updateStorage(updatedLocations: string[]): void {
+    const locationsList = Array.from(new Set(updatedLocations));
+    this.dataStoreService.updateStorage(LOCATIONS, locationsList);
+  }
+
+  private loadInitialLocations(): string[] {
+    const locations = this.dataStoreService.getFromStorage<string[]>(LOCATIONS);
+    return locations ?? [];
   }
 }
