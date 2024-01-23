@@ -5,10 +5,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "format": "prettier . --write"
   },
   "private": true,
   "dependencies": {
@@ -44,6 +45,8 @@
     "karma-chrome-launcher": "~3.1.0",
     "karma-cli": "~1.0.1",
     "karma-jasmine": "~4.0.0",
+    "ng-packagr": "^17.0.0",
+    "prettier": "3.2.4",
     "protractor": "^7.0.0",
     "ts-node": "5.0.1",
     "tslint": "~6.1.0",

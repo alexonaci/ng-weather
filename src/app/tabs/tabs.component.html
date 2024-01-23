@@ -1,0 +1,12 @@
+<main class="tab-container">
+  <section class="tab-section">
+    <ng-container *ngFor="let item of items; let i = index; trackBy: trackTab">
+      <article class="tab" (click)="changeActiveTab(i)">
+        <div class="title">{{ item.title }} ({{ item.code }}) <span (click)="closeTab(item.code)">&nbsp;X</span></div>
+      </article>
+    </ng-container>
+  </section>
+  <section class="content">
+    <ng-content></ng-content>
+  </section>
+</main>
