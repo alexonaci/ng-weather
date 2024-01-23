@@ -20,7 +20,7 @@
   "dataGroups": [
     {
       "name": "WeatherAPI",
-      "urls": ["http://api.openweathermap.org/data/**"],
+      "urls": ["https://api.openweathermap.org/data/**"],
       "cacheConfig": {
         "maxAge": "6h",
         "strategy": "freshness"
