@@ -7,7 +7,7 @@ import { Forecast } from './forecasts-list/forecast.type';
 import { LocationService } from './location.service';
 import { filter, tap } from 'rxjs/operators';
 import { LOCATIONS, Operation } from './location.type';
-import { CachedResources } from './app.module';
+import { NgWeather } from './app.module';
 import { Resource } from './cache-system/cache.config';
 import { DataQueryService } from './cache-system/data-query.service';
 import { DataStoreService } from './cache-system/data-store.service';
@@ -21,9 +21,9 @@ export class WeatherService {
   private currentConditions = signal<ConditionsAndZip[]>([]);
 
   constructor(
-    private dataQueryService: DataQueryService<Resource<CachedResources>>,
+    private dataQueryService: DataQueryService<Resource<NgWeather>>,
     private locationService: LocationService,
-    private dataStoreService: DataStoreService<Resource<CachedResources>>,
+    private dataStoreService: DataStoreService<Resource<NgWeather>>,
   ) {
     this.listenToLocationChanges();
     this.listenToLocationOperations();

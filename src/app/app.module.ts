@@ -18,7 +18,7 @@ import { TabsComponent } from './tabs/tabs.component';
  * Cache configured trough value provider.
  */
 const TWO_HOURS = 2 * 60 * 60 * 1000; // 2 hours * 60 minutes/hour * 60 seconds/minute * 1000 milliseconds/second
-const cacheConfig: CacheConfig<CachedResources> = {
+const cacheConfig: CacheConfig<NgWeather> = {
   resources: [
     {
       name: 'currentConditions',
@@ -35,7 +35,7 @@ const cacheConfig: CacheConfig<CachedResources> = {
   ],
 };
 
-export type CachedResources = 'currentConditions' | 'forecast' | 'locations';
+export type NgWeather = 'currentConditions' | 'forecast' | 'locations';
 
 @NgModule({
   declarations: [
