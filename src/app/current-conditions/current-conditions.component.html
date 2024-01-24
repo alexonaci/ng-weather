@@ -3,7 +3,7 @@
     <div class="well flex">
       <div class="">
         <h3>{{ currentConditions()[index()]?.data?.name }} ({{ currentConditions()[index()]?.zip }})</h3>
-        <h4>Current currentConditions: {{ currentConditions()[index()]?.data?.weather[0]?.main }}</h4>
+        <h4>Current conditions: {{ currentConditions()[index()]?.data?.weather[0]?.main }}</h4>
         <h4>Temperatures today:</h4>
         <p>
           Current {{ currentConditions()[index()]?.data?.main?.temp | number: '.0-0' }} - Max

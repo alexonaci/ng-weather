@@ -6,7 +6,7 @@ import { ConditionsAndZip } from './conditions-and-zip.type';
 import { Forecast } from './forecasts-list/forecast.type';
 import { LocationService } from './location.service';
 import { filter, tap } from 'rxjs/operators';
-import { Operation } from './location.type';
+import { LOCATIONS, Operation } from './location.type';
 import { CachedResources } from './app.module';
 import { Resource } from './cache-system/cache.config';
 import { DataQueryService } from './cache-system/data-query.service';
@@ -23,6 +23,7 @@ export class WeatherService {
   constructor(
     private dataQueryService: DataQueryService<Resource<CachedResources>>,
     private locationService: LocationService,
+    private dataStoreService: DataStoreService<Resource<CachedResources>>,
   ) {
     this.listenToLocationChanges();
     this.listenToLocationOperations();
@@ -31,22 +32,21 @@ export class WeatherService {
   addCurrentConditions(zipcode: string): void {
     const queryUrl = `${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`;
     this.dataQueryService.query<CurrentConditions>('currentConditions', zipcode, queryUrl).subscribe({
-      next: (data) => this.currentConditions.update((conditions) => [...conditions, { zip: zipcode, data }]),
+      next: (data) => {
+        this.addToStateAndStorage(zipcode, data);
+      },
       error: () => {
         this.locationService.removeLocation(zipcode);
       },
     });
   }
 
-  /*
-   * Adapted the signal change to not mutate the conditions array but to return
-   * a new array. This was affecting the computed signal from currentConditionsComponent.
-   */
   removeCurrentConditions(zipcode: string) {
     this.currentConditions.update((conditions) => {
       return conditions.filter((condition) => condition.zip !== zipcode);
     });
-    this.locationService.removeLocation(zipcode);
+    const locations = this.dataStoreService.getFromStorage<string[]>(LOCATIONS);
+    this.updateStorage(locations.filter((loc) => loc !== zipcode));
   }
 
   getCurrentConditions(): Signal<ConditionsAndZip[]> {
@@ -66,6 +66,13 @@ export class WeatherService {
     else if (id >= 801 && id <= 804) return WeatherService.ICON_URL + 'art_clouds.png';
     else if (id === 741 || id === 761) return WeatherService.ICON_URL + 'art_fog.png';
     else return WeatherService.ICON_URL + 'art_clear.png';
+  }
+
+  private addToStateAndStorage(zipcode: string, data: CurrentConditions) {
+    const locations = this.dataStoreService.getFromStorage<string[]>(LOCATIONS);
+    const existingLocations = locations ?? [];
+    this.updateStorage([...existingLocations, zipcode]);
+    this.currentConditions.update((conditions) => [...conditions, { zip: zipcode, data }]);
   }
 
   private listenToLocationOperations(): void {
@@ -103,5 +110,10 @@ export class WeatherService {
         }),
       )
       .subscribe();
+  }
+
+  private updateStorage(updatedLocations: string[]): void {
+    const locationsList = Array.from(new Set(updatedLocations));
+    this.dataStoreService.updateStorage(LOCATIONS, locationsList);
   }
 }

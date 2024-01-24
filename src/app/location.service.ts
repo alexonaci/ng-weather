@@ -21,22 +21,13 @@ export class LocationService {
   }
 
   addLocation(zipcode: string): void {
-    const locations = this.dataStoreService.getFromStorage<string[]>(LOCATIONS);
-    const existingLocations = locations ?? [];
     this.changeNotifier$.next({ zipcode, operation: Operation.ADD });
-    this.updateStorage([...existingLocations, zipcode]);
   }
 
   removeLocation(zipcode: string): void {
-    const locations = this.dataStoreService.getFromStorage<string[]>(LOCATIONS);
     this.changeNotifier$.next({ zipcode, operation: Operation.DELETE });
-    this.updateStorage(locations.filter((loc) => loc !== zipcode));
   }
 
-  private updateStorage(updatedLocations: string[]): void {
-    const locationsList = Array.from(new Set(updatedLocations));
-    this.dataStoreService.updateStorage(LOCATIONS, locationsList);
-  }
 
   private loadInitialLocations(): string[] {
     const locations = this.dataStoreService.getFromStorage<string[]>(LOCATIONS);
