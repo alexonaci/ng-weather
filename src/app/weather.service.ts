@@ -74,7 +74,10 @@ export class WeatherService {
       .pipe(
         tap((update) => {
           const locationAlreadyPresent = this.currentConditions().some((condition) => condition.zip === update.zipcode);
-          if (update.operation === Operation.ADD && !locationAlreadyPresent) {
+          if (locationAlreadyPresent) {
+            return;
+          }
+          if (update.operation === Operation.ADD) {
             this.addCurrentConditions(update.zipcode);
           } else {
             this.removeCurrentConditions(update.zipcode);
