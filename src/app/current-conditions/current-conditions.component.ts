@@ -14,22 +14,13 @@ export class CurrentConditionsComponent {
   protected weatherService = inject(WeatherService);
   protected locationService = inject(LocationService);
   currentConditions: Signal<ConditionsAndZip[]> = this.weatherService.getCurrentConditions();
-  tabData = computed(() => {
-    const result = this.currentConditions().map((c) => ({ code: c.zip, title: c.data.name }));
-    return result;
-  });
-  index = signal(0);
 
   showForecast(zipcode: string) {
     this.router.navigate(['/forecast', zipcode]);
   }
 
-  changeActiveItem(index: number): void {
-    this.index.update(() => index);
-  }
-
-  closeTab(zip: string): void {
-    this.weatherService.removeCurrentConditions(zip);
-    this.index.update(() => 0);
+  removeCurrentCondition(index: number) {
+    const zipcode = this.currentConditions()[index].zip;
+    this.weatherService.removeCurrentConditions(zipcode);
   }
 }

@@ -1,26 +1,31 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { TabItem } from './tabs.component.type';
+import {
+  AfterContentInit,
+  Component,
+  ContentChildren,
+  ElementRef,
+  EventEmitter,
+  Output,
+  QueryList,
+  TemplateRef,
+} from '@angular/core';
+import { TabDirective } from './tab.directive';
 
 @Component({
   selector: 'tabs',
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabsComponent {
-  @Input() items: TabItem[] = [];
-  @Output() private activeTabChange = new EventEmitter<number>();
-  @Output() private closeTabChange = new EventEmitter<string>();
+export class TabsComponent implements AfterContentInit {
+  @ContentChildren(TabDirective)
+  tabs: QueryList<TabDirective>;
+  currentTab: TemplateRef<ElementRef> | undefined;
+  @Output() tabClose = new EventEmitter();
 
-  changeActiveTab(index: number): void {
-    this.activeTabChange.emit(index);
+  removeTab(index: number): void {
+    this.tabClose.emit(index);
   }
 
-  closeTab(code: string): void {
-    this.closeTabChange.emit(code);
-  }
-
-  trackTab(_: number, item: TabItem): string | null {
-    return item ? item.code : null;
+  ngAfterContentInit(): void {
+    this.currentTab = this.tabs?.get(0)?.template;
   }
 }

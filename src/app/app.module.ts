@@ -12,7 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { CACHE_CONFIG, CacheConfig } from './cache-system/cache.config';
-import { TabsComponent } from './tabs/tabs.component';
+import { TabsModule } from './tabs/tabs.module';
 
 /*
  * Cache configured trough value provider.
@@ -44,7 +44,6 @@ export type NgWeather = 'currentConditions' | 'forecast' | 'locations';
     ForecastsListComponent,
     CurrentConditionsComponent,
     MainPageComponent,
-    TabsComponent,
   ],
   imports: [
     BrowserModule,
@@ -55,6 +54,7 @@ export type NgWeather = 'currentConditions' | 'forecast' | 'locations';
     ServiceWorkerModule.register('/ngsw-worker.js', {
       enabled: environment.production,
     }),
+    TabsModule,
   ],
   providers: [
     {

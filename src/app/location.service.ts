@@ -28,7 +28,6 @@ export class LocationService {
     this.changeNotifier$.next({ zipcode, operation: Operation.DELETE });
   }
 
-
   private loadInitialLocations(): string[] {
     const locations = this.dataStoreService.getFromStorage<string[]>(LOCATIONS);
     return locations ?? [];

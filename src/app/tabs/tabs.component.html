@@ -1,12 +1,12 @@
-<main class="tab-container">
-  <section class="tab-section">
-    <ng-container *ngFor="let item of items; let i = index; trackBy: trackTab">
-      <article class="tab" (click)="changeActiveTab(i)">
-        <div class="title">{{ item.title }} ({{ item.code }}) <span (click)="closeTab(item.code)">&nbsp;X</span></div>
-      </article>
-    </ng-container>
-  </section>
-  <section class="content">
-    <ng-content></ng-content>
-  </section>
-</main>
+<ng-container *ngFor="let tab of tabs; index as i">
+  <div (click)="currentTab = tab.template" class="tab">
+    <button class="tab-title">
+      <ng-container [ngTemplateOutlet]="tab.name"></ng-container>
+      &nbsp;<span class="close-icon" (click)="removeTab(i)">X</span>
+    </button>
+  </div>
+</ng-container>
+
+<div class="tab-container">
+  <ng-container [ngTemplateOutlet]="currentTab"></ng-container>
+</div>
