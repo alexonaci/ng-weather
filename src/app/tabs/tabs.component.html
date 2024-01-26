@@ -1,12 +1,10 @@
 <ng-container *ngFor="let tab of tabs; index as i">
-  <div (click)="currentTab = tab.template" class="tab">
-    <button class="tab-title">
+    <button class="tab-title" (click)="currentTab = tab.template" [class.active]="currentTab === tab.template">
       <ng-container [ngTemplateOutlet]="tab.name"></ng-container>
       &nbsp;<span class="close-icon" (click)="removeTab(i)">X</span>
     </button>
-  </div>
 </ng-container>
 
-<div class="tab-container">
+<div class="tab-container" *ngIf="tabs.length > 0">
   <ng-container [ngTemplateOutlet]="currentTab"></ng-container>
 </div>

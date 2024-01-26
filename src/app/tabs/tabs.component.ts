@@ -23,6 +23,7 @@ export class TabsComponent implements AfterContentInit {
 
   removeTab(index: number): void {
     this.tabClose.emit(index);
+    this.currentTab = undefined;
   }
 
   ngAfterContentInit(): void {

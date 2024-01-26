@@ -10,8 +10,20 @@
   border: 1px solid black;
 }
 
+.tab-container:empty {
+  width: 50%;
+  max-width: 1140px;
+  margin: 0 auto;
+  width: 100%;
+  height: 320px;
+}
+
 .tab {
   display: inline;
+}
+
+.tab-title.active {
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .tab-title {
