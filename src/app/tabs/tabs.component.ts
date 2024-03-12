@@ -1,4 +1,5 @@
 import {
+  AfterContentChecked,
   AfterContentInit,
   Component,
   ContentChildren,
@@ -15,7 +16,7 @@ import { TabDirective } from './tab.directive';
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.css',
 })
-export class TabsComponent implements AfterContentInit {
+export class TabsComponent implements AfterContentInit, AfterContentChecked {
   @ContentChildren(TabDirective)
   tabs: QueryList<TabDirective>;
   currentTab: TemplateRef<ElementRef> | undefined;
@@ -23,10 +24,15 @@ export class TabsComponent implements AfterContentInit {
 
   removeTab(index: number): void {
     this.tabClose.emit(index);
-    this.currentTab = undefined;
   }
 
   ngAfterContentInit(): void {
     this.currentTab = this.tabs?.get(0)?.template;
+  }
+
+  ngAfterContentChecked(): void {
+    if (this.tabs?.length === 1) {
+      this.currentTab = this.tabs?.get(0)?.template;
+    }
   }
 }
