@@ -1,15 +1,18 @@
-<tabs (tabClose)="removeCurrentCondition($event)">
-  <ng-container *ngFor="let currentCondition of currentConditions()">
-    <ng-template #tabName> {{ currentCondition?.data?.name }} ({{ currentCondition?.zip }}) </ng-template>
+<ng-container *ngIf="currentConditions()?.length > 0">
+  <tabs (tabClose)="removeCurrentCondition($event)">
+    <ng-container *ngFor="let currentCondition of currentConditions()">
+      <ng-template #tabName> {{ currentCondition?.data?.name }} ({{ currentCondition?.zip }}) </ng-template>
+  
+      <div *tab="tabName">
+        <ng-container
+          [ngTemplateOutlet]="tabContent"
+          [ngTemplateOutletContext]="{ currentCondition: currentCondition }"
+        ></ng-container>
+      </div>
+    </ng-container>
+  </tabs>
+</ng-container>
 
-    <div *tab="tabName">
-      <ng-container
-        [ngTemplateOutlet]="tabContent"
-        [ngTemplateOutletContext]="{ currentCondition: currentCondition }"
-      ></ng-container>
-    </div>
-  </ng-container>
-</tabs>
 
 <ng-template #tabContent let-currentCondition="currentCondition">
   <div class="well flex">
